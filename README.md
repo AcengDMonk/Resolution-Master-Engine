@@ -1,15 +1,10 @@
-<!--
-  ╔══════════════════════════════════════════════════════════════════════╗
-  ║   RESOLUTION MASTER ENGINE (RME)                                     ║
-  ║   Open-Source Display Scaling & Proportional Density Subsystem       ║
-  ║   Release v1.1.0 · Autonomous POSIX Shell Architecture               ║
-  ╚══════════════════════════════════════════════════════════════════════╝
--->
-
 <div align="center">
 
-# Resolution Master Engine (RME)
-### Zero-Dependency Display Pipeline Scaler & Density Invariant Engine for Android
+<a href="https://github.com/AcengDMonk/Resolution-Master-Engine">
+  <img src="assets/rme-banner.png" alt="Resolution Master Engine — Portgas D. Ace profile branding" width="100%">
+</a>
+
+<h3>Zero-Dependency Display Pipeline Scaler & Density Invariant Engine for Android</h3>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/Platform-Android%2011%E2%80%9316-3DDC84?style=flat-square&logo=android&logoColor=white)](https://github.com/AcengDMonk/Resolution-Master-Engine)
