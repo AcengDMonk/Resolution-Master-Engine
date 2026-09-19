@@ -296,7 +296,7 @@ setprop debug.hwc.fbsize ""
 
 ## 📜 10 · Changelog / Riwayat Versi
 
-### v1.0.0 — Public Release (B64 Master Architecture)
+### v1.0.0 — Public Release (Architecture)
 
 ```
 EN:
@@ -332,7 +332,7 @@ ID:
 
 *🌌 Project Genesis — Resolution Master Engine*
 
-*Base author: Aceng D Monk · Public Edition 1.0.0*
+*Base author: Aceng D Monk · Full Edition 1.0.0*
 
 *Target: All Android 11–16 · Primary: Transsion Group (Infinix · Tecno · Itel)*
 
