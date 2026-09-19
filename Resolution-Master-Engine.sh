@@ -18,7 +18,6 @@
 # ║                       sh /data/local/tmp/RME.sh                              ║
 # ║      • Shizuku/LADB → cp /sdcard/RME.sh /data/local/tmp/ &&                  ║
 # ║                       sh /data/local/tmp/RME.sh                              ║
-# ║      • AxManager    → Place in webroot plugin or execute via Axora terminal  ║
 # ║                                                                              ║
 # ║  ID: Jalankan script ini menggunakan ADB, Shizuku, LADB, atau Termux:        ║
 # ║      • Salin berkas ke /data/local/tmp/ agar bebas blokir izin noexec.       ║
@@ -37,76 +36,45 @@ echo "│  ⚡ INITIALIZING DISPLAY SCALER... / MEMULAI ENGINE RESOLUSI...      
 echo "└──────────────────────────────────────────────────────────────────────┘"
 sleep 1
 
-# ╔══════════════════════════════════════════════════════════════════════════════╗
-# ║                                                                              ║
-# ║   ███████  SECTION 0 — USER CONFIGURATION  ███████                          ║
-# ║   ███                                           ███                          ║
-# ║   EN: THIS IS THE MAIN CONFIGURATION SECTION.                                ║
-# ║   ID: INI ADALAH BAGIAN UTAMA KONFIGURASI PENGGUNA.                          ║
-# ║   ███                                           ███                          ║
-# ║   ███████████████████████████████████████████████████                        ║
-# ║                                                                              ║
-# ╚══════════════════════════════════════════════════════════════════════════════╝
+# ══════════════════════════════════════════════════════════════════════
+# BLOCK 0 ▸ GLOBAL CONFIGURATION & USER KNOBS
+# Function: User-facing preset selector, execution mode, & runtime timers.
+# ══════════════════════════════════════════════════════════════════════
 
-# ┌─────────────────────────────────────────────────────────────────────────────┐
-# │  [A]  DOWNSCALE PRESET PROFILE / PROFIL RESOLUSI                            │
-# ├─────────────────────────────────────────────────────────────────────────────┤
-# │  EN: Choose default action if script is executed without CLI arguments:     │
-# │  ID: Pilih profil otomatis jika skrip dijalankan tanpa argumen terminal:    │
-# │                                                                              │
-# │  GOLDEN      → 66.67% Scale (720p Class) · Recommended for everyday gaming. │
-# │                -55.6% GPU pixel load. Sharp text, ice-cold battery.          │
-# │                Infinix Note 50 Pro target: 720x1624 @ 293 DPI.               │
-# │                                                                              │
-# │  PERFORMANCE → 70.0% Scale · Moderate downscale balance.                    │
-# │                Infinix Note 50 Pro target: 756x1705 @ 308 DPI.               │
-# │                                                                              │
-# │  EXTREME     → 50.0% Flat Scale · Tournament tier. -75.0% GPU pixel load.   │
-# │                Maximum sustained FPS in heavy titles (Warzone, Genshin).    │
-# │                Infinix Note 50 Pro target: 540x1218 @ 220 DPI.               │
-# │                                                                              │
-# │  NATIVE      → 100% Reset · Immediately restore device physical defaults.   │
-# └─────────────────────────────────────────────────────────────────────────────┘
+# ┌─────────────────────────────────────────────────────────────────────┐
+# │  [A]  DOWNSCALE PRESET PROFILE / PROFIL RESOLUSI                    │
+# │  GOLDEN      → 66.67% Scale (720p Class) · -55.6% GPU Pixel Load    │
+# │                Infinix Note 50 Pro Target: 720x1624 @ 293 DPI       │
+# │  PERFORMANCE → 70.0% Scale · Moderate Gaming Balance                │
+# │                Infinix Note 50 Pro Target: 756x1705 @ 308 DPI       │
+# │  EXTREME     → 50.0% Scale · Tournament Tier · -75.0% GPU Load      │
+# │                Infinix Note 50 Pro Target: 540x1218 @ 220 DPI       │
+# │  NATIVE      → 100% Reset · Immediately restore physical defaults   │
+# └─────────────────────────────────────────────────────────────────────┘
 DEFAULT_PRESET="GOLDEN"
 
-# ┌─────────────────────────────────────────────────────────────────────────────┐
-# │  [B]  EXECUTION BEHAVIOR / METODE PENERAPAN                                 │
-# ├─────────────────────────────────────────────────────────────────────────────┤
-# │  PREVIEW → Safe Mode. Applies resolution with a 30s auto-rollback guard.    │
-# │            Requires running 'confirm <token>' to lock. Recommended!         │
-# │                                                                              │
-# │  INSTANT → Direct Mode. Bypasses 30-second watchdog. Ideal for automated    │
-# │            launcher scripts and companion integration with Milkyway.sh.     │
-# └─────────────────────────────────────────────────────────────────────────────┘
+# ┌─────────────────────────────────────────────────────────────────────┐
+# │  [B]  EXECUTION BEHAVIOR / METODE PENERAPAN                         │
+# │  PREVIEW → Safe Mode. Applies with 30s auto-rollback guard.         │
+# │  INSTANT → Direct Mode. Bypasses timer. Ideal for game launchers.   │
+# └─────────────────────────────────────────────────────────────────────┘
 DEFAULT_EXEC_MODE="PREVIEW"
 
-# ┌─────────────────────────────────────────────────────────────────────────────┐
-# │  [C]  WATCHDOG TIMEOUT (SECONDS) / WAKTU PENGAMAN PREVIEW                   │
-# └─────────────────────────────────────────────────────────────────────────────┘
+# ┌─────────────────────────────────────────────────────────────────────┐
+# │  [C]  WATCHDOG TIMEOUT & TRANSSION SYNC SWITCH                      │
+# └─────────────────────────────────────────────────────────────────────┘
 PREVIEW_SECONDS=30
-
-# ┌─────────────────────────────────────────────────────────────────────────────┐
-# │  [D]  TRANSSION XOS / HIOS NATIVE SYSTEM SYNC                               │
-# ├─────────────────────────────────────────────────────────────────────────────┤
-# │  1 = Synchronize resolution with Transsion system database & hwc buffer.    │
-# │  0 = Pure AOSP WindowManager commands only.                                 │
-# └─────────────────────────────────────────────────────────────────────────────┘
 SYNC_TRANSSION_XOS=1
-
-# ╔══════════════════════════════════════════════════════════════════════════════╗
-# ║   ⛔  END OF USER CONFIGURATION / AKHIR KONFIGURASI PENGGUNA               ║
-# ║   EN: Engine internals below. Do NOT edit unless you are an expert.        ║
-# ║   ID: Mesin internal di bawah. JANGAN ubah kecuali Anda paham kodenya.      ║
-# ╚══════════════════════════════════════════════════════════════════════════════╝
 
 VERSION="1.0.0-PUBLIC"
 NOTICE_TEXT=""
 LIVE_OUTCOME_JSON=""
 SCRIPT_PATH_RESOLVED=""
 
-# -----------------------------------------------------------------------------
-# CORE PLATFORM VALIDATORS & HELPERS
-# -----------------------------------------------------------------------------
+# ══════════════════════════════════════════════════════════════════════
+# BLOCK 1 ▸ CORE SYSTEM VALIDATORS & RUNTIME SENSORS
+# Function: Numeric constraints, UUID tokens, PID verification & get-config.
+# ══════════════════════════════════════════════════════════════════════
 number() {
     case "$1" in ''|*[!0-9]*|0[0-9]*) return 1 ;; esac
     [ "${#1}" -le 8 ] && [ "$1" -ge "$2" ] && [ "$1" -le "$3" ]
@@ -211,9 +179,10 @@ process_alive() {
     kill -0 "$1" 2>/dev/null
 }
 
-# -----------------------------------------------------------------------------
-# ROBUST SCRIPT RESOLVER (AUTOLOCATE SELF FOR RECOVERY DAEMON)
-# -----------------------------------------------------------------------------
+# ══════════════════════════════════════════════════════════════════════
+# BLOCK 2 ▸ SCRIPT PATH RESOLVER & ATOMIC DIRECTORY LOCK
+# Function: POSIX Atomic Lock without flock dependency & PID auto-purge.
+# ══════════════════════════════════════════════════════════════════════
 resolve_script_path() {
     if [ -n "$SCRIPT_PATH_RESOLVED" ] && [ -f "$SCRIPT_PATH_RESOLVED" ]; then
         return 0
@@ -231,8 +200,7 @@ resolve_script_path() {
             "/data/local/tmp/display.sh" \
             "/sdcard/Resolution-Master-Engine.sh" \
             "/sdcard/RME.sh" \
-            "$MODDIR/Resolution-Master-Engine.sh" \
-            "$MODDIR/display.sh"; do
+            "$MODDIR/Resolution-Master-Engine.sh"; do
             if [ -f "$candidate" ]; then
                 SCRIPT_PATH_RESOLVED="$candidate"
                 break
@@ -242,9 +210,6 @@ resolve_script_path() {
     [ -f "$SCRIPT_PATH_RESOLVED" ] || SCRIPT_PATH_RESOLVED="/data/local/tmp/Resolution-Master-Engine.sh"
 }
 
-# -----------------------------------------------------------------------------
-# INITIALIZATION & SECURE STATE DIRECTORY
-# -----------------------------------------------------------------------------
 initialize() {
     CURRENT_UID=$(platform_uid)
     [ "$CURRENT_UID" = "2000" ] || [ "$CURRENT_UID" = "0" ] || {
@@ -286,9 +251,6 @@ initialize() {
     }
 }
 
-# -----------------------------------------------------------------------------
-# ATOMIC DIRECTORY LOCKING (POSIX NATIVE - 100% FLOCK-INDEPENDENT)
-# -----------------------------------------------------------------------------
 take_lock() {
     LOCK_DIR="$STATE/lock.d"
     LOCK_TRIES=0
@@ -319,6 +281,83 @@ release_lock() {
     rm -rf "$STATE/lock.d" 2>/dev/null
 }
 
+# ══════════════════════════════════════════════════════════════════════
+# BLOCK 3 ▸ WINDOW MANAGER & ACONFIG DISPLAY FLAGS
+# Function: AOSP Native DPI correction, Auto-scaling bypass, Letterbox
+#           Aspect Ratio lock & Orientation Request Overrides.
+# ═══════════════════════════════════════════════════════════════════
+sync_window_manager_flags() {
+    # 1. Failsafe: Verifikasi dimensi resolusi fisik layar agar tidak bernilai kosong atau nol
+    NATIVE_WIDTH="${PHYSICAL_WIDTH}"
+    NATIVE_HEIGHT="${PHYSICAL_HEIGHT}"
+
+    if [ -z "$NATIVE_WIDTH" ] || [ -z "$NATIVE_HEIGHT" ] || [ "$NATIVE_WIDTH" -eq 0 ] || [ "$NATIVE_HEIGHT" -eq 0 ]; then
+        NATIVE_RES_WM=$(wm size 2>/dev/null | grep -Ei 'Physical|Override' | grep -oE '[0-9]+x[0-9]+' | head -n 1)
+        NATIVE_WIDTH=$(echo "$NATIVE_RES_WM" | cut -d'x' -f1)
+        NATIVE_HEIGHT=$(echo "$NATIVE_RES_WM" | cut -d'x' -f2)
+        # Standar fallback resolusi FHD+ jika penelusuran sysfs/wm gagal
+        [ -z "$NATIVE_WIDTH" ] && NATIVE_WIDTH=1080
+        [ -z "$NATIVE_HEIGHT" ] && NATIVE_HEIGHT=2436
+    fi
+
+    # 2. Kalkulasi Dinamis Aspek Rasio Asli Layar secara Real-Time (Presisi 6 Desimal)
+    ASPECT_RATIO=$(awk "BEGIN {printf \"%.6f\", $NATIVE_HEIGHT/$NATIVE_WIDTH}" 2>/dev/null)
+    if [ -z "$ASPECT_RATIO" ] || [ "$ASPECT_RATIO" = "0.000000" ]; then
+        # Fallback matematika biner murni jika shell tidak mendukung awk
+        INTEG=$(( NATIVE_HEIGHT / NATIVE_WIDTH ))
+        FRAC=$(( (NATIVE_HEIGHT % NATIVE_WIDTH) * 1000000 / NATIVE_WIDTH ))
+        FRAC_LEN=${#FRAC}
+        while [ "$FRAC_LEN" -lt 6 ]; do
+            FRAC="0$FRAC"
+            FRAC_LEN=${#FRAC}
+        done
+        ASPECT_RATIO="${INTEG}.${FRAC}"
+    fi
+
+    # 3. Letterbox & Position Controls (Menyesuaikan Secara Dinamis terhadap Rasio Fisik Perangkat)
+    cmd window set-letterbox-style --aspectRatio "$ASPECT_RATIO" >/dev/null 2>&1
+    cmd window set-letterbox-style --minAspectRatioForUnresizable "$ASPECT_RATIO" >/dev/null 2>&1
+    cmd window set-letterbox-style --horizontalPositionMultiplier 0.5 >/dev/null 2>&1
+    cmd window set-letterbox-style --verticalPositionMultiplier 0.5 >/dev/null 2>&1
+
+    # 4. Native Orientation Locking (Zero Compat Frame Overhead)
+    wm set-ignore-orientation-request false >/dev/null 2>&1
+
+    # 5. Direct Native Boundaries Rendering (Overscan & Auto-scale Bypass)
+    wm scaling off >/dev/null 2>&1
+    cmd window scaling off >/dev/null 2>&1
+}
+
+# ══════════════════════════════════════════════════════════════════════
+# BLOCK 4 ▸ TRANSSION XOS / HIOS SYSTEM & HWC BUFFER SYNC
+# Function: Keep Transsion display database & HWC framebuffer aligned.
+# ═══════════════════════════════════════════════════════════════════
+sync_transsion_system() {
+    local w="$1" h="$2"
+    [ "$SYNC_TRANSSION_XOS" = "1" ] || return 0
+    local brand
+    brand=$(getprop ro.product.brand 2>/dev/null | tr '[:upper:]' '[:lower:]')
+    case "$brand" in
+        *infinix*|*tecno*|*itel*|*transsion*)
+            if [ "$w" = "reset" ]; then
+                settings put system tran_resolution_size_0 "$PHYSICAL_SIZE" >/dev/null 2>&1
+                settings put system tran_resolution_size_1 "$PHYSICAL_SIZE" >/dev/null 2>&1
+                settings put system tran_resolution_default "$PHYSICAL_SIZE" >/dev/null 2>&1
+                setprop debug.hwc.fbsize "$PHYSICAL_SIZE" 2>/dev/null
+            else
+                settings put system tran_resolution_size_0 "${w}x${h}" >/dev/null 2>&1
+                settings put system tran_resolution_size_1 "${w}x${h}" >/dev/null 2>&1
+                settings put system tran_resolution_default "${w}x${h}" >/dev/null 2>&1
+                setprop debug.hwc.fbsize "${w}x${h}" 2>/dev/null
+            fi
+            ;;
+    esac
+}
+
+# ══════════════════════════════════════════════════════════════════════
+# BLOCK 5 ▸ DISPLAY STATE RECORDERS & RECOVERY HELPERS
+# Function: Manage backup files, verify runtime stability, & rollbacks.
+# ═══════════════════════════════════════════════════════════════════
 write_record() {
     RECORD_NAME=$1
     shift
@@ -415,31 +454,6 @@ verify_pair() {
     return 1
 }
 
-# -----------------------------------------------------------------------------
-# TRANSSION SYSTEM & FRAMEBUFFER COUPLING
-# -----------------------------------------------------------------------------
-sync_transsion_system() {
-    local w="$1" h="$2"
-    [ "$SYNC_TRANSSION_XOS" = "1" ] || return 0
-    local brand
-    brand=$(getprop ro.product.brand 2>/dev/null | tr '[:upper:]' '[:lower:]')
-    case "$brand" in
-        *infinix*|*tecno*|*itel*|*transsion*)
-            if [ "$w" = "reset" ]; then
-                settings put system tran_resolution_size_0 "$PHYSICAL_SIZE" >/dev/null 2>&1
-                settings put system tran_resolution_size_1 "$PHYSICAL_SIZE" >/dev/null 2>&1
-                settings put system tran_resolution_default "$PHYSICAL_SIZE" >/dev/null 2>&1
-                setprop debug.hwc.fbsize "$PHYSICAL_SIZE" 2>/dev/null
-            else
-                settings put system tran_resolution_size_0 "${w}x${h}" >/dev/null 2>&1
-                settings put system tran_resolution_size_1 "${w}x${h}" >/dev/null 2>&1
-                settings put system tran_resolution_default "${w}x${h}" >/dev/null 2>&1
-                setprop debug.hwc.fbsize "${w}x${h}" 2>/dev/null
-            fi
-            ;;
-    esac
-}
-
 set_pair() {
     SET_SIZE=$1
     SET_DPI=$2
@@ -449,6 +463,10 @@ set_pair() {
     [ "$(platform_user)" = 0 ] || return 1
     wm_call density "$SET_DPI" >/dev/null || return 1
 
+    # Injeksi Window Manager Flags (Letterbox, Scaling Off, Boundaries)
+    sync_window_manager_flags
+
+    # Injeksi Transsion XOS Database Sync
     if [ "$SET_SIZE" = "reset" ]; then
         sync_transsion_system reset reset
     else
@@ -504,6 +522,10 @@ rollback() {
     attempt_recovery
 }
 
+# ══════════════════════════════════════════════════════════════════════
+# BLOCK 6 ▸ WATCHDOG RECOVERY DAEMON (30S SAFETY ROLLBACK)
+# Function: Background guard process ensuring zero permanent black screens.
+# ═══════════════════════════════════════════════════════════════════
 guard_alive() {
     G_TOKEN=${1:-$P_TOKEN}
     [ -f "$STATE/ready.$G_TOKEN" ] || return 1
@@ -532,9 +554,6 @@ ensure_guard() {
     done
 }
 
-# -----------------------------------------------------------------------------
-# WATCHDOG TIMER DAEMON (30S SAFETY ROLLBACK GUARANTEE)
-# -----------------------------------------------------------------------------
 guard_loop() {
     WATCH_TOKEN=$1
     identifier "$WATCH_TOKEN" || return 1
@@ -601,9 +620,10 @@ recover_pending() {
     fi
 }
 
-# -----------------------------------------------------------------------------
-# DYNAMIC PRESET ENGINE (HARDCODED GOLDEN RATIO + UNIVERSAL MATH)
-# -----------------------------------------------------------------------------
+# ══════════════════════════════════════════════════════════════════════
+# BLOCK 7 ▸ DYNAMIC PRESET ENGINE (GOLDEN RATIO & UNIVERSAL MATH)
+# Function: Hardcoded 1080x2436 logic + Universal GCD & Pythagorean DPI.
+# ═══════════════════════════════════════════════════════════════════
 detect_best_preset() {
     read_display || return 1
     MODE=${1:-$DEFAULT_PRESET}
@@ -669,9 +689,10 @@ detect_best_preset() {
         'BEGIN { printf "%d", d * sqrt(w*w + h*h) / sqrt(nw*nw + nh*nh) + 0.5 }')
 }
 
-# -----------------------------------------------------------------------------
-# DISPLAY MANIPULATION ACTIONS
-# -----------------------------------------------------------------------------
+# ══════════════════════════════════════════════════════════════════════
+# BLOCK 8 ▸ USER ACTIONS, CLI DISPATCHER & STATUS REPORT
+# Function: Preview countdown, token confirm, instant apply, & reset.
+# ═══════════════════════════════════════════════════════════════════
 preview() {
     [ "$#" -eq 3 ] || {
         error "Expected arguments: <width> <height> <dpi>"
@@ -880,7 +901,7 @@ status_json() {
 }
 
 # -----------------------------------------------------------------------------
-# COMMAND DISPATCHER
+# COMMAND DISPATCHER & LIFECYCLE ROUTER
 # -----------------------------------------------------------------------------
 rme_main() {
     COMMAND=${1:-default_action}
