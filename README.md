@@ -28,7 +28,7 @@
 
 ### 👇 **QUICK ACTIONS / JALAN PINTAS** 👇
 
-[![Download Script](https://img.shields.io/badge/📥_DOWNLOAD_SCRIPT-Raw_File-2ea44f?style=for-the-badge)](https://raw.githubusercontent.com)
+[![Download Script](https://img.shields.io/badge/📥_DOWNLOAD_SCRIPT-Raw_File-2ea44f?style=for-the-badge)](https://raw.githubusercontent.com/AcengDMonk/Resolution-Master-Engine/main/Resolution-Master-Engine.sh)
 [![View Protocol](https://img.shields.io/badge/📜_MILKYWAY_PROTOCOL-Companion-blue?style=for-the-badge)](https://gist.github.com/AcengDMonk)
 
 <br>
