@@ -14,7 +14,6 @@
 **Official Companion Series to Project Genesis — The Milky Way Equation**
 
 **INFINIX · TECNO · ITEL · ALL ANDROID**
-**60Hz / 120Hz / 144Hz · Helio G99 / G200 · Dimensity · Snapdragon · Exynos**
 
 ---
 
@@ -28,7 +27,7 @@
 
 ### 👇 **QUICK ACTIONS / JALAN PINTAS** 👇
 
-[![Download Script](https://img.shields.io/badge/📥_DOWNLOAD_SCRIPT-Raw_File-2ea44f?style=for-the-badge)](https://raw.githubusercontent.com/AcengDMonk/Resolution-Master-Engine/main/Resolution-Master-Engine.sh)
+[![Download Script](https://img.shields.io/badge/📥_DOWNLOAD_SCRIPT-Raw_File-2ea44f?style=for-the-badge)](https://github.com/AcengDMonk/Resolution-Master-Engine/releases)
 [![View Protocol](https://img.shields.io/badge/📜_MILKYWAY_PROTOCOL-Companion-blue?style=for-the-badge)](https://gist.github.com/AcengDMonk)
 
 <br>
