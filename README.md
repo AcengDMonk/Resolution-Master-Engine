@@ -19,12 +19,12 @@
 
 <br>
 
-[**Quick Start**](#-quick-start) •
-[**Preset Matrix**](#-preset-matrix) •
-[**Architecture**](#-architecture--mechanics) •
-[**CLI Reference**](#-command-line-interface) •
-[**Safety Watchdog**](#-safety-watchdog--recovery) •
-[**Changelog**](#-changelog)
+<a href="#quick-start"><b>Quick Start</b></a> •
+<a href="#preset-matrix"><b>Preset Matrix</b></a> •
+<a href="#architecture--mechanics"><b>Architecture</b></a> •
+<a href="#command-line-interface"><b>CLI Reference</b></a> •
+<a href="#safety-watchdog--recovery"><b>Safety Watchdog</b></a> •
+<a href="#changelog"><b>Changelog</b></a>
 
 <br>
 
@@ -47,6 +47,7 @@ By shrinking the active rendering viewport, RME significantly mitigates GPU frag
 
 ---
 
+<a id="preset-matrix"></a>
 ## 📊 Preset Matrix
 
 RME incorporates a specialized profile for modern high-resolution displays alongside an automated universal mathematical engine that computes ideal downscale metrics for any display panel geometry.
@@ -65,30 +66,31 @@ RME incorporates a specialized profile for modern high-resolution displays along
 
 ---
 
+<a id="architecture--mechanics"></a>
 ## 🏗 Architecture & Mechanics
 
 ```
- [ User / CLI Execution ]
-           │
-           ▼
- ┌───────────────────┐      POSIX Atomic Check
- │   take_lock()     │ ─────────────────────────────┐
- └───────────────────┘                              ▼
-           │                               ┌──────────────────┐
-           ▼                               │   State Engine   │
- ┌───────────────────┐                     │  /data/local/tmp │
- │ Dynamic Calculator│                     │  /raresolution/  │
- └───────────────────┘                     └──────────────────┘
-           │                                        ▲
-           ▼                                        │
- ┌───────────────────┐     Spawns Guard Process     │
- │   preview_mode    │ ─────────────────────────────┘
- └───────────────────┘
-           │
-           ├─► WindowManager Configuration (wm size & wm density)
-           ├─► Letterbox Bounds Invariant (cmd window set-letterbox-style)
-           ├─► Direct Boundary Rendering (wm scaling off)
-           └─► OEM Display Synchronizer (Optional Vendor Coupling)
+ [ User / CLI Execution: rme_main ]
+                 │
+                 ▼
+ ┌──────────────────────────────┐      POSIX Atomic VFS Lock
+ │    acquire_atomic_lock()     │ ─────────────────────────────┐
+ └──────────────────────────────┘                              ▼
+                 │                               ┌──────────────────────────┐
+                 ▼                               │       State Engine       │
+ ┌──────────────────────────────┐                │  /data/local/tmp/        │
+ │  resolve_optimal_geometry()  │                │  raresolution/           │
+ └──────────────────────────────┘                └──────────────────────────┘
+                 │                                             ▲
+                 ▼                                             │
+ ┌──────────────────────────────┐     Spawns Guard Process     │
+ │    rme_execute_preview()     │ ─────────────────────────────┘
+ └──────────────────────────────┘
+                 │
+                 ├─► WindowManager Configuration (call_wm size & density)
+                 ├─► Invariant Letterbox Bounds (cmd window set-letterbox-style)
+                 ├─► Direct Viewport Compositing (call_wm scaling off)
+                 └─► Hardware Composer Coupling (synchronize_vendor_hwc)
 ```
 
 1. **Proportional DPI Metric:**  
@@ -101,6 +103,7 @@ RME incorporates a specialized profile for modern high-resolution displays along
 
 ---
 
+<a id="quick-start"></a>
 ## 🚀 Quick Start
 
 ### 1. Installation
@@ -130,7 +133,7 @@ sh /data/local/tmp/RME.sh auto
 The display dynamically downscales to the golden tier (e.g., $720 \times 1624$ @ 293 DPI). The engine arms the 30-second watchdog and emits a status transaction containing a verification token:
 
 ```json
-{"info":"Applying Golden Balanced Tier → 720x1624 @ 293 DPI"}
+{"info":"Arming Calibrated 1080x2436 Golden Baseline (720p / -55.6% Pixel Load) -> 720x1624 @ 293 DPI"}
 {"ok":true,"pending":{"token":"d3b07384-d113-4f56-8a9b-891964e528b9","seconds":30}}
 ```
 
@@ -143,6 +146,7 @@ sh /data/local/tmp/RME.sh confirm d3b07384-d113-4f56-8a9b-891964e528b9
 
 ---
 
+<a id="command-line-interface"></a>
 ## 💻 Command-Line Interface
 
 ```bash
@@ -169,6 +173,58 @@ sh /data/local/tmp/RME.sh status          # Telemetry dump in structured JSON
 
 ---
 
+## 🔄 7 · Hardware Composer Synchronization
+
+When `SYNC_VENDOR_HWC=1` the engine automatically detects downstream OEM frameworks (such as Transsion XOS / HiOS) and synchronizes hardware composition targets:
+
+```sh
+settings put system tran_resolution_size_0 <WxH>
+settings put system tran_resolution_size_1 <WxH>
+settings put system tran_resolution_default <WxH>
+setprop debug.hwc.fbsize <WxH>
+```
+
+This keeps the vendor display settings database, SystemUI, Dynamic Island, and HWC framebuffer completely aligned without UI offsets or coordinate clipping.
+
+---
+
+## ⚠️ 8 · Risk & DWYOR / Risiko
+
+| Action | Level | EN Risk | ID Risiko | Safe Default |
+|--------|-------|---------|-----------|:------------:|
+| PREVIEW mode | 🟢 LOW | Temporary change, auto-rollback | Perubahan sementara, auto-rollback | Recommended |
+| INSTANT mode | 🟡 MEDIUM | No auto-rollback | Tidak ada auto-rollback | Only for automation |
+| EXTREME 50% | 🟡 MEDIUM | Very soft image, touch may feel different | Gambar sangat lembut, sentuhan terasa berbeda | Tournament only |
+| Custom apply | 🟠 HIGH | Invalid ratio can cause UI issues | Rasio invalid bisa merusak UI | Keep aspect ratio |
+| Permanent lock without testing | 🔴 EXTREME | Rare soft-brick on broken OEM | Soft-brick jarang pada OEM rusak | Always use PREVIEW first |
+
+> **DWYOR** = Do With Your Own Risk  
+> Always test with PREVIEW mode first.
+
+---
+
+## 🔄 9 · Quick Reset / Perintah Reset
+
+```bash
+# Full native restore via script
+sh /data/local/tmp/RME.sh reset
+
+# Or manual AOSP emergency commands
+wm size reset
+wm density reset
+wm scaling auto
+
+# Vendor framebuffer cleanup (if needed)
+settings delete system tran_resolution_size_0
+settings delete system tran_resolution_size_1
+settings delete system tran_resolution_default
+setprop debug.hwc.fbsize ""
+```
+
+---
+
+<a id="safety-watchdog--recovery"></a>
+<a id="safety-watchdog"></a>
 ## 🛡 Safety Watchdog & Recovery
 
 The watchdog architecture guarantees system integrity under all operational modes:
@@ -182,9 +238,9 @@ The watchdog architecture guarantees system integrity under all operational mode
 
 ---
 
-## ⚙️ Configuration (BLOCK 0)
+## ⚙️ Configuration (MODULE 00)
 
-Advanced operational defaults can be directly adjusted within `BLOCK 0` of the script:
+Advanced operational defaults can be directly adjusted within `MODULE 00` of the script:
 
 ```sh
 # [A] Default profile executed when no parameters are provided
@@ -196,21 +252,23 @@ DEFAULT_EXEC_MODE="PREVIEW"      # PREVIEW (Guarded 30s) | INSTANT (Direct commi
 # [C] Watchdog window duration
 PREVIEW_SECONDS=30
 
-# [D] Transsion XOS/HiOS hardware composer synchronization
-SYNC_TRANSSION_XOS=1             # 1 = Synchronize display settings | 0 = Stock AOSP only
+# [D] Hardware composer & display settings synchronization
+SYNC_VENDOR_HWC=1                # 1 = Synchronize vendor HWC & settings | 0 = Pure AOSP only
 ```
 
 ---
 
+<a id="changelog"></a>
 ## 📜 Changelog
 
 ### v1.1.0 (Current Stable)
-* **Window Manager Alignment:** Integrated `BLOCK 3` WindowManager and display flags.
-* **Aspect-Ratio Precision:** Implemented real-time, 6-decimal precision aspect-ratio evaluation with bit-shift integer fallbacks.
-* **Letterbox Bounds Control:** Added programmatic letterbox scaling and positioning constraints (`--aspectRatio`, `--minAspectRatioForUnresizable`).
-* **Direct Surface Compositing:** Enforced orientation lock request passing (`set-ignore-orientation-request false`) and native overscan scaling bypass (`wm scaling off`).
-* **Atomic Locking Primitives:** Migrated lock mechanics to POSIX-compliant atomic directory locks, permanently resolving Busybox `flock` incompatibilities.
-* **Watchdog Concurrency Fix:** Resolved loop race conditions and stale PID tracking within `guard_loop`.
+* **Modular Architectural Refactoring:** Complete reverse-engineering and split into 10 decoupled subsystems (`MODULE 00` through `MODULE 09`) with standardized `rme_*` namespace protection.
+* **Window Manager Alignment (`MODULE 04`):** Integrated WindowManager invariant overrides and programmatic letterbox bounds control (`--aspectRatio`, `--minAspectRatioForUnresizable`).
+* **Aspect-Ratio Precision:** Real-time 6-decimal aspect-ratio derivation (`compute_aspect_ratio`) with integer bit-shift fallback for awk-deficient shells.
+* **Direct Surface Compositing:** Automated orientation request locking (`set-ignore-orientation-request false`) and native overscan scaling bypass (`call_wm scaling off`).
+* **POSIX VFS Atomic Locking (`MODULE 02`):** Migrated to directory creation primitives (`mkdir lock.d`) with automated stale-PID garbage collection, permanently eliminating BusyBox `flock` dependency.
+* **Watchdog Concurrency Fix (`MODULE 06`):** Resolved loop race conditions, stale record evaluation, and self-locating binary resolution (`resolve_self_binary`).
+* **Unified Hardware Coupling:** Replaced hardcoded vendor logic with adaptive framework synchronizer (`SYNC_VENDOR_HWC`).
 
 ### v1.0.0 (Initial Release)
 * **POSIX Rewrite:** Structured as a zero-dependency, standalone shell engine.
@@ -227,4 +285,3 @@ SYNC_TRANSSION_XOS=1             # 1 = Synchronize display settings | 0 = Stock 
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE). You are free to use, inspect, modify, and integrate this software within personal setups, custom ROM distributions, or utility suites.
-```
